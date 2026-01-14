@@ -1,0 +1,183 @@
+/* <style> GAS用 */
+    body {
+        /* 画像を背景に設定 */
+        background-image: url('magnifico_architecture_studio.jpg');
+
+        /* 背景を画面全体に固定 */
+        background-size: cover;
+        background-position: center bottom;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        
+
+        /* 全体のフォント調整 */
+        font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+        color: #ffffff;
+        padding-top: 0;
+        min-height: 100vh;
+    }
+
+    /*＊　画面全体に薄い黒のフィルターをかける
+    ＊ 文字の読みやすさを向上させるため
+    ＊*/
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* 60%の透過度で黒のオーバーレイ */
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* ここからコンテンツ部分のスタイル */
+
+    /* 検索バー */
+    .sticky-header {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color:#dee2e6 !important;
+        position: sticky;
+        top:0;
+        z-index:sticky;
+        /* 背景色を白の半透明に設定 */
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        backdrop-filter: blur(10px); /*　背景をぼかす */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* タブのボタン */
+    .nav-tabs .nav-link {
+        color: #e0e0e0; /* 非アクティブ時は明るいグレー */
+        background-color: rgba(0, 0, 0, 0.5); /* 背景を暗く */
+        border: none;
+        margin-right: 2px;
+        border-radius: 4px 4px 0 0;
+    }
+
+    /* アクティブなタブ */
+    .nav-tabs .nav-link.active {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #ffffff;
+        background-color: rgba(116, 137, 185, 0.3); /* 本体と同じ白 */
+        border-bottom-color: transparent;
+        z-index: 1020;
+    }
+
+    /* タブのコンテンツ部分 */
+    .tab-content{
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        border-radius: 0 4px 4px 4px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* 影をつけて浮かせる */
+    }
+
+    h6 {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    /* 入力フォームの微調整 */
+    .form-label {
+        font-size: 1.0rem;
+        color: #cdcff0;
+        margin-bottom: 0.2rem;
+        font-weight: 300;
+    }
+
+    .form-control, .form-select {
+        font-size: 1rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid #ccc;
+    }
+
+    /* 必須バッジ */
+    .badge.bg-danger {
+        background-color:#dc3545 !important;
+    }
+
+    /* テーブル全体のスタイル */
+    .table {
+        color:#191932;
+        background-color: rgba(255, 255, 255, 0.85);
+        border-collapse: collapse;
+        margin-bottom: 0;
+    }
+
+    /* テーブル行 */
+    .table tbody tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    /* テーブルヘッダー */
+    .table thead {
+        background-color: rgba(116, 137, 185, 0.3); /* アクティブタブと同じ色 */
+        color:#ffffff;
+        font-weight: 600;
+    }
+
+    /* テーブル内の入力欄*/
+    .table input.form-control-sm {
+        border: 1px solid #dee2e6;
+        background-color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+    }
+
+    /* テーブル内の背景色 */
+    .table tbody tr:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* テーブルレスポンシブ */
+    .table-responsive {
+        background-color: transparent;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* 影をつけて浮かせる */
+    }
+    /* 下部固定ボタンエリア */
+    .fixed-bottom {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* 文字に影をつけて文字を読みやすくする */
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    /*　ナビゲーションボタンのスタイル */
+    .btn-nav {
+        border-radius: 8px;
+        padding: 6px 0;
+        transition: all 0.2s;
+    }
+    
+    .btn-nav:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .active-nav {
+        background-color: rgba(13, 110, 253, 0.1);
+        font-weight: bold;
+        color: #0d6efd !important;
+    }
+
+    /* フッターの重なり順序調整 */
+    .fixed-bottom {
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* メインコンテンツがフッターに隠れないように調整 */
+    body {
+        padding-bottom: 80px;
+    }
+
+
+/* </style> GAS用 */

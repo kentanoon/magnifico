@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <base target="_top">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <!-- ローカル確認用 -->
+        <link rel="stylesheet" href="main.css">
+
+        <?!= include('css'); ?>
+
+    </head>
+    <body>
+    
+
+        <div class="sticky-header border-bottom p-3 shadow-sm d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-buildings"></i> 申請管理システム</h5>
+            <span class="badge bg-dark rounded-pill px-3">Admin</span>
+        </div>
+
+        <div class="container-fluid mt-4 mb-5 pb-5"> 
+
+            <div id="dashboardView">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card glass-card text-center p-4 h-100 border-0 shadow-sm">
+                            <h6 class="text-secondary fw-bold">進行中案件</h6>
+                            <div class="display-4 fw-bold text-success" id="kpi_ongoing">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-white text-shadow mb-3"><i class="bi bi-clock-history"></i>最近の動き</h6>
+            <div class="card glass-card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 bg-transparent">
+                        <tbody id="recentListBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <form id ="projectForm" onsubmit="return false;">
+            <div id="projectDetailView" style="display: none;">
+                <div class="bg-white bg-opacity-75 rounded p-3 mb-3 border">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-1 fw-bold" id="disp_custName_large">顧客未選択</h5>
+                            <small class="text-muted"><i class="bi bi-geo-alt"></i> <span id="disp_address">-</span></small>
+                        </div>
+                        
+                        <div class="col-md-4 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-primary bg-white" onclick="openCustomerSelector()">
+                                <i class="bi bi-search"></i> 顧客を変更/検索
+                            </button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="cust_id" id="hidden_cust_id">
+                </div>
+
+                <ul class="nav nav-tabs" id="projectTabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1" type="button">基本・契約</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2" type="button">敷地・法令</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab3" type="button">申請・関係者</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab4" type="button">工程管理</button></li>
+                </ul>
+
+                <div class="tab-content p-4 border border-top-0 glass-card" id="myTabContent">
+
+                    <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+                        <h6 class="border-bottom pb-2 mb-3 text-white">案件概要</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-2">
+                                <label class="form-label">案件ID</label>
+                                <input type="text" class="form-control" name="proj_id" value="自動採番" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">案件名<span class="badge bg-danger">必須</span></label>
+                                <input type="text" class="form-control" name="proj_id" placeholder="例:横浜市S様邸新築工事" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">工事種別</label>
+                                <select class="form-select" name="const_type">
+                                    <option>新築</option>
+                                    <option>修繕</option>
+                                    <option>改修</option>
+                                    <option>解体</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">ステータス</label>
+                                <select class="form-select" name="status">
+                                    <option>計画中</option>
+                                    <option>進行中</option>
+                                    <option>完了</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <h6 class="border-bottom pb-2 mb-3 text-white mt-4">契約・現場</h6>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">契約日(予定)</label>
+                                <input type="date" class="form-control" name="contract_date">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">契約金額</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="contract_amount">
+                                    <span class="input-group-text">円</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">現場住所</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="site_address" id="site_address">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="copyAddress()">顧客住所をコピー</button>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">依頼内容・備考</label>
+                                <textarea class="form-control" name="request_detail" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab2" role="tabpanel" style="padding: 1rem;">
+                       <h6 class="border-bottom pb-2 mb-3 text-white">敷地条件・法規制</h6> 
+                       <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <label class="form-label">用途地域</label>
+                                <select class="form-select" name="use_zone">
+                                    <option>第一種低層住居専用地域</option>
+                                    <option>第二種低層住居専用地域</option>
+                                    <option>第一種中高層住居専用地域</option>
+                                    <option>第二種中高層住居専用地域</option>
+                                    <option>第一種住居地域</option>
+                                    <option>第二種住居地域</option>
+                                    <option>準住居地域</option>
+                                    <option>近隣商業地域</option>
+                                    <option>商業地域</option>
+                                    <option>準工業地域</option>
+                                    <option>工業地域</option>
+                                    <option>工業専用地域</option>
+                                </select> 
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">防火地域</label>
+                                <select class="form-select" name="fire_zone">
+                                    <option>非防火地域</option>
+                                    <option>防火地域</option>
+                                    <option>準防火地域</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">建ぺい/容積</label>
+                                <input type="text" class="form-control" name="bldg_ratio">
+                            </div>
+
+                            <div class="col-md-4 pt-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="law_29" value="TRUE">
+                                    <label class="form-check-label">29条許可</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="law_43" value="TRUE">
+                                    <label class="form-check-label">43条担書</label>
+                                </div>
+                            </div>
+                       </div> 
+
+                       <h6 class="border-bottom pb-2 mb-3 text-white">建物規模</h6>
+                       <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">構造</label>
+                                <input type="text" class="form-control" name="structure" placeholder="例: 木造二階建て">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">延床面積</label>
+                                <input type="number" step="0.01" class="form-control" name="floor_area">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">建築面積(㎡)</label>
+                                <input type="number" step="0.01" class="form-control" name="building_area">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">高さ(m)</label>
+                                <input type="number" step="0.01" class="form-control" name="height">
+                            </div>
+                       </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab3" role="tabpanel" style="padding: 1rem;">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 mb-3 text-white mt-3">申請情報</h6>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <label class="form-label">確認申請番号</label>
+                                        <input type="text" class="form-control" name="cert_number">
+                                    </div>
+                
+                                    <div class="col-12 mt-3">
+                                        <label class="form-label">各種認定</label>
+                                        <div class="d-flex flex-wrap gap-2">
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="cert_longterm" value="TRUE">
+                                                <label class="form-check-label">長期優良住宅</label>
+                                            </div>
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="cert_zeh" value="TRUE">
+                                                <label class="form-check-label">ZEH</label>
+                                            </div>
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="cert_lowcarbon" value="TRUE">
+                                                <label class="form-check-label">低炭素住宅</label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 mb-3 text-white mt-3">関係者・保険</h6>
+                                <div class="row g-2">
+
+                                    <div class="col-6">
+                                        <label class="form-label">設計者</label>
+                                        <input type="text" class="form-control" name="architect">
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label">監理者</label>
+                                        <input type="text" class="form-control" name="supervisor">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">瑕疵担保保険番号</label>
+                                        <input type="text" class="form-control" name="insurance_no">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab4" role="tabpanel" style="padding: 0.5rem;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-white mb-0 mt-3">工程進捗・実績</h6>
+                            <button type="button" class="btn btn-sm btn-outline-white text-white" onclick="autoCalcSchedule()">
+                                <i class="bi bi-calculator"></i> 契約日から自動計算
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 25%">工程名</th>
+                                        <th style="width: 25%">予定日</th>
+                                        <th style="width: 25%">実績日</th>
+                                        <th style="width: 25%">進捗・備考</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold">事前調査</td>
+                                        <td><input type="date" class="form-control form-control-sm" name="pre_survey_plan"></td>
+                                        <td><input type="date" class="form-control form-control-sm" name="pre_survey_act"></td>
+                                        <td><input type="text" class="form-control form-control-sm" name="pre_survey_note"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">確認申請</td>
+                                        <td><input type="date" class="form-control form-control-sm" name="cert_plan"></td>
+                                        <td><input type="date" class="form-control form-control-sm" name="cert_act"></td>
+                                        <td><div class="form-check"><input class="form-check-input" type="checkbox" name="cert_done">
+                                            <label class="small">決済済み</label>
+                                        </div></td>
+                                    </tr>
+
+                                    <tr class="table-warning"> <td class="fw-bold">着工</td>
+                                        <td><input type="date" class="form-control form-control-sm" name="start_plan" id="start_plan"></td>
+                                        <td><input type="date" class="form-control form-control-sm" name="start_act"></td>
+                                        <td></td>
+                                    </tr>
+
+                                    <tr class="table-success"> <td class="fw-bold">完了・引渡</td>
+                                        <td><input type="date" class="form-control form-control-sm" name="end_plan" id="end_plan"></td>
+                                        <td><input type="date" class="form-control form-control-sm" name="end_act"></td>
+                                        <td><div class="form-check"><input class="form-check-input" type="checkbox" name="end_done">
+                                            <label class="small">引渡済</label>
+                                        </div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div id="customerListView" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-white text-shadow mb-0"><i class="bi bi-people"></i>顧客リスト</h5>
+                <button class="btn btn-light text-primary fw-bold shadow-sm" onclick="openCustomerModal()">
+                    <i class="bi bi-person-plus-fill"></i> 新規登録
+                </button>
+            </div>
+
+            <div class="card glass-card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 bg-transparent">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>顧客名</th>
+                                    <th>種別</th>
+                                    <th>電話番号</th>
+                                    <th class="text-end">操作</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="customerTableBody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="fixed-bottom bg-white border-top p-2 shadow-lg" style="z-index: 1040; background-color: rgba(255,255,255,0.95)!important; backdrop-filter: blur(10px);">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    
+                    <div class="col-6 col-md-5 d-flex gap-1">
+                        <button class="btn btn-nav w-100 text-primary active-nav" id="nav_dash" onclick="switchView('dashboard')">
+                            <div class="small"><i class="bi bi-graph-up fs-5"></i></div>
+                            <div style="font-size: 0.7rem;">ホーム</div>
+                        </button>
+
+                        <button class="btn btn-nav w-100 text-secondary" id="nav_cust" onclick="switchView('customerList')">
+                            <div class="small"><i class="bi bi-people fs-5"></i></div>
+                            <div style="font-size: 0.7rem;">顧客管理</div>
+                        </button>
+
+                        <button class="btn btn-nav w-100 text-secondary" id="nav_proj" onclick="switchView('projectDetail')">
+                            <div class="small"><i class="bi bi-house-gear fs-5"></i></div>
+                            <div style="font-size: 0.7rem;">案件入力</div>
+                        </button>
+                    </div>
+
+                    <div class="col-6 col-md-7 text-end" id="footerActions">
+
+                        <div id="action_projectDetail" style="display:none;">
+                            <span id="projStatusMsg" class="text-success small fw-bold me-2"></span>
+                            <button class="btn btn-outline-secondary btn-sm me-1" onclick="resetForm()">クリア</button>"
+                            <button class="btn btn-primary fw-bold px-4" onclick="submitData()">
+                                <i class="bi bi-save"></i> 案件保存
+                            </button>
+                        </div>
+
+                        <div id="action_dashboard" style="display:block;">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass-card border-0">
+                    <div class="modal-header border-bottom-0">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-person-lines-fill"></i> 顧客情報</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id="customerForm">
+                            <input type="hidden" name="cust-id">
+                            <div class="mb-3">
+                                <label class="form-label">顧客名 <span class="badge bg-danger">必須</span></label>
+                                <input type="text" class="form-control" name="cust_name" required placeholder="例 株式会社アオイ建設">
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label">種別</label>
+                                    <select class="form-select" name="cust_type">
+                                        <option>法人</option>
+                                        <option>個人</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">電話番号</label>
+                                    <input type="text" class="form-control" name="cust_phone">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">住所</label>
+                                <input type="text" class="form-control" name="cust_address" placeholder="自動入力用">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer border-top-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">閉じる</button>
+                        <button type="button" class="btn btn-primary px-4" onclick="submitCustomer()">保存する</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed-bottom bg-white border-top p-3 shadow-lg" style="z-index: 1050;">
+            <div class="container-fluid d-flex justify-content-end gap-2">
+                <span id="statusMessage" class="text-success align-items-center me-3 fw-bold"></span>
+                <button type="button" class="btn btn-secondary rounded-pill px-4" onclick="resetForm()">クリア</button>
+                <button type="button" class="btn btn-warning rounded-pill px-5 fw-bold" onclick="submitData()">
+                    <i class="bi bi-save"></i> 保存
+                </button>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <?!= include('js'); ?>
+    <!-- ローカル確認用 -->
+    <script src="main.js"></script>
+    </body>
+</html>

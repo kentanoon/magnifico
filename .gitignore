@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode履歴
+.history/
+
+# バックアップフォルダ
+*_Backup/
