@@ -6,9 +6,39 @@ let customerModalObj = null; // Bootstrap Modalインスタンス
 
 //　初期化処理
 window.onload = function() {
+    //　ローカル開発用のダミーデータ
+    const dummyDashboard = {
+        ongoingCount: 5,
+        recentActivities: [
+             {
+                customerName: '株式会社アオイ建設',
+                projectName: '横浜市S様邸新築工事',
+                status: '進行中',
+                statusColor: 'success',
+                date: '2024-12-20'
+            },
+            {
+                customerName: '田中太郎様',
+                projectName: '世田谷区T様邸改修工事',
+                status: '計画中',
+                statusColor: 'warning',
+                date: '2024-12-19'
+            }
+        ]
+    };
+
+    const dummyCustomers = [
+        { id: 'cust_001', name: '株式会社アオイ建設', type: '法人', phone: '03-1234-5678', address: '東京都渋谷区1-2-3' },
+        { id: 'cust_002', name: '田中太郎', type: '個人', phone: '090-1234-5678', address: '東京都世田谷区4-5-6' }
+    ];
+
+    // ローカル開発用にダミーデータを使用
+    initCustomerSearch(dummyCustomers);
+    renderDashboard(dummyDashboard);
+
     // 顧客リストの取得
-    google.script.run.withSuccessHandler(initCustomerSearch).getCustomerListForSearch();
-    google.script.run.withSuccessHandler(renderDashboard).getDashboardData();
+    //google.script.run.withSuccessHandler(initCustomerSearch).getCustomerListForSearch();
+    //google.script.run.withSuccessHandler(renderDashboard).getDashboardData();
 
     // モーダルの準備
     customerModalObj = new bootstrap.Modal(document.getElementById('customerModal'));
@@ -62,6 +92,44 @@ function switchView(viewName) {
 
 }
 
+
+function setActiveNav(navId) {
+    const navBtn = document.getElementById(navId);
+    if (navBtn) {
+        navBtn.classList.add('active-nav');
+        navBtn.classList.remove('text-secodary');
+    }
+}
+
+
+// ダッシュボード描画
+function renderDashboard(data) {
+    // KPI表示
+    document.getElementById('kpi_ongoing').textContent = data.ongoingCount || 0;
+
+    // 最近の動きリストの表示
+    const tbody = document.getElementById('recentListBody');
+    tbody.innerHTML = '';
+
+    if (data.recentActivities && data.recentActivities.length > 0) {
+        data.recentActivities.forEach(activity => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="py-3">
+                    <div class="fw-bold">${activity.customerName || '顧客名不明'}</div>
+                    <small class="text-muted">${activity.projectName || ''}</small>
+                </td>
+                <td class="text-end">
+                    <span class="badge bg-${activity.statusColor || 'secondary'}">${activity.status || ''}</span>
+                    <br><small class="text-muted">${activity.date || ''}</small>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted py-4">最近の動きはありません</td></tr>';
+    }
+}
 /**
  * 顧客管理関連
  */

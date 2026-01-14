@@ -6,15 +6,13 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <!-- ローカル確認用 -->
         <link rel="stylesheet" href="main.css">
-
         <?!= include('css'); ?>
 
     </head>
     <body>
     
-
         <div class="sticky-header border-bottom p-3 shadow-sm d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-buildings"></i> 申請管理システム</h5>
+            <h5 class="mb-0 fw-bold text-white"><i class="bi bi-buildings"></i> 申請管理システム</h5>
             <span class="badge bg-dark rounded-pill px-3">Admin</span>
         </div>
 
@@ -46,7 +44,12 @@
                 <div class="bg-white bg-opacity-75 rounded p-3 mb-3 border">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h5 class="mb-1 fw-bold" id="disp_custName_large">顧客未選択</h5>
+                            <!-- 顧客検索を追加 -->
+                            <label class="form-label small text-muted">顧客を検索</label>
+                            <input type="text" class="form-control" id="customerSearch" list="customerOptions" placeholder="顧客名を入力...">
+                            <datalist id="customerOptions"></datalist>
+                            
+                            <h5 class="mb-1 fw-bold mt-2" id="disp_custName_large">顧客未選択</h5>
                             <small class="text-muted"><i class="bi bi-geo-alt"></i> <span id="disp_address">-</span></small>
                         </div>
                         
@@ -78,7 +81,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">案件名<span class="badge bg-danger">必須</span></label>
-                                <input type="text" class="form-control" name="proj_id" placeholder="例:横浜市S様邸新築工事" required>
+                                <input type="text" class="form-control" name="proj_name" placeholder="例:横浜市S様邸新築工事" required>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">工事種別</label>

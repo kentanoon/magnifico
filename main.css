@@ -74,6 +74,10 @@
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* 影をつけて浮かせる */
     }
 
+    h5 {
+        color: #ffffff;
+    }
+
     h6 {
         font-weight: 600;
         font-size: 1.2rem;
